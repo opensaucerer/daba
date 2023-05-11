@@ -13,3 +13,9 @@ export enum HttpStatus {
   Unathorized = 'UNAUTHORIZED',
   Unauthenticaed = 'UNAUTHENTICATED',
 }
+
+export const StatusForCode: Record<number, HttpStatus> = {
+  400: HttpStatus.BadRequest,
+  401: HttpStatus.Unathorized,
+  403: HttpStatus.Unauthenticaed,
+};

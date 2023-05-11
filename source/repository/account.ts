@@ -8,8 +8,9 @@ import * as func from '../helpers/func';
 
 export const createAccount = async (
   data: IAccount,
+  session?: mongoose.ClientSession,
 ): Promise<HydratedDocument<IAccount>> => {
-  return await new AccountModel(data).save();
+  return await new AccountModel(data).save({ session });
 };
 
 export const findByEmail = async (email: string): Promise<TAccount | null> => {
@@ -22,10 +23,6 @@ export const findById = async (
   return await AccountModel.findOne({ _id: id });
 };
 
-export const findByKey = async (key: string): Promise<TAccount | null> => {
-  return await AccountModel.findOne({ key });
-};
-
 export const findByIdAndUpdate = async (
   id: mongoose.ObjectId,
   data:
@@ -33,8 +30,12 @@ export const findByIdAndUpdate = async (
     | Partial<Record<keyof IAccount, any>>
     | mongoose.RootQuerySelector<IAccount>
     | mongoose.UpdateQuery<IAccount>,
+  session?: mongoose.ClientSession,
 ): Promise<TAccount | null> => {
-  return await AccountModel.findOneAndUpdate({ _id: id }, data, { new: true });
+  return await AccountModel.findOneAndUpdate({ _id: id }, data, {
+    new: true,
+    session,
+  });
 };
 
 export const findOneByMatch = async (

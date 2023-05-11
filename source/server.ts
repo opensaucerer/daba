@@ -21,10 +21,9 @@ export default async function startApplication(
   let server = await buildGraphQLServer(app);
 
   server.listen(env.port, async () => {
-    logger.info(`
-    All connections established successfully.
-    REST listening on : http://localhost:${env.port}
-    GraphQL listening on: http://localhost:${env.port}/pivot/graphql`);
+    logger.info(`All connections established successfully.`);
+    logger.info(`REST at: http://localhost:${env.port}`);
+    logger.info(`GraphQL at: http://localhost:${env.port}/pivot/graphql`);
   });
 
   handleRouting(app);

@@ -3,13 +3,14 @@ import * as func from '../helpers/func';
 import { TAccount } from '../types/account';
 
 export default model<TAccount>(
-  'patient',
+  'account',
   new Schema<TAccount>(
     {
       email: {
         $type: String,
         required: true,
         lowercase: true,
+        unique: true, // creates a unique index
       },
       password: {
         $type: String,

@@ -1,12 +1,12 @@
 import { MakeResponse } from '../types/generic';
 import { GraphQLError } from 'graphql';
 import { ValidationError } from 'joi';
-import { HttpStatus } from '../types/enum';
+import { HttpStatus, StatusForCode } from '../types/enum';
 
 export const makeResponse = (
   status: number | boolean,
   message: string,
-  data: Record<string, unknown>,
+  data: Record<string, any>,
 ): MakeResponse => {
   return {
     status,
@@ -21,7 +21,7 @@ export const sendErrorResponse = (
 ): GraphQLError => {
   throw new GraphQLError(message, {
     extensions: {
-      code: code || HttpStatus.BadRequest,
+      code: StatusForCode[400] || HttpStatus.BadRequest,
       http: { status: code },
     },
   });
