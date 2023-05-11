@@ -10,9 +10,10 @@ export default `
     type Transaction {
         id: ID!
         sender: Account!
-        recipient: Account!
+        recipient: Account
         amount: Float!
         timestamp: String!
+        session: String!
     }
 
     type Query {

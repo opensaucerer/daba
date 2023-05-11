@@ -20,9 +20,9 @@ export function subscribeToConnectionEvents(): void {
     logger.info('Mongoose connected to ' + env.database.mongodb.name);
   });
   connection.on('error', (error) => {
-    console.error('Mongoose connection error: ' + error);
+    logger.error('Mongoose connection error: ' + error);
   });
   connection.on('disconnected', () => {
-    console.warn('Mongoose disconnected');
+    logger.warn('Mongoose disconnected');
   });
 }
