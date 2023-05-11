@@ -5,15 +5,16 @@ import * as accountRepository from '../repository/account';
 import * as walletRepository from '../repository/wallet';
 import * as bcrypt from '../helpers/bcrypt';
 import mongoose from 'mongoose';
+import * as jwt from '../helpers/jwt';
 
 export async function register(payload: IAccount): Promise<MakeResponse> {
   const session = await mongoose.connection.startSession();
 
   try {
-    const existingUser = await accountRepository.findByEmail(
+    const existingAccount = await accountRepository.findByEmail(
       payload.email.toLowerCase(),
     );
-    if (existingUser) {
+    if (existingAccount) {
       return response.makeResponse(false, 'Email already in use!', {});
     }
 
@@ -32,13 +33,12 @@ export async function register(payload: IAccount): Promise<MakeResponse> {
       await session.abortTransaction();
       return response.makeResponse(false, 'Account creation failed!', {});
     }
-    account.password = '';
+    account.set('password', undefined);
 
     // create user wallet
     const wallet = await walletRepository.createWallet(
       {
         owner: account._id,
-        balance: 0,
       },
       session,
     );
@@ -49,9 +49,33 @@ export async function register(payload: IAccount): Promise<MakeResponse> {
 
     await session.commitTransaction();
 
-    return response.makeResponse(true, '', account);
+    return response.makeResponse(true, '', account.jsonify());
   } catch (error: any) {
     await session.abortTransaction();
+    return response.makeResponse(false, error.message, {});
+  }
+}
+
+export async function login(payload: IAccount): Promise<MakeResponse> {
+  try {
+    const account = await accountRepository.findByEmail(
+      payload.email.toLowerCase(),
+    );
+    if (!account) {
+      return response.makeResponse(false, 'Invalid login credentials!', {});
+    }
+
+    if (!bcrypt.compareHashedPassword(payload.password, account.password)) {
+      return response.makeResponse(false, 'Invalid login credentials!', {});
+    }
+
+    account.set('password', undefined);
+
+    return response.makeResponse(true, '', {
+      account: account.jsonify(),
+      token: jwt.signToken({ id: account._id }),
+    });
+  } catch (error: any) {
     return response.makeResponse(false, error.message, {});
   }
 }

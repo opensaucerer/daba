@@ -2,6 +2,9 @@ import { Request } from 'express';
 import * as jwt from '../helpers/jwt';
 import { GraphQLError } from 'graphql';
 import { HttpStatus } from '../types/enum';
+import * as accountRepository from '../repository/account';
+import mongoose from 'mongoose';
+import * as response from '../helpers/response';
 
 export default async (req: Request) => {
   if (
@@ -12,22 +15,19 @@ export default async (req: Request) => {
   ) {
     return {};
   }
-
   const token = req.headers.authorization!.split(' ')[1];
-
   if (token) {
     let verified = await jwt.verifyToken(token);
     if (verified.status) {
-      // TODO: check user's existence
-      return { user: verified.data };
+      const account = await accountRepository.findById(
+        verified.data['id'] as mongoose.ObjectId,
+      );
+      if (!account) {
+        return response.sendErrorResponse('Login failed!', 403);
+      }
+      return { user: account.jsonify() };
     }
-
-    throw new GraphQLError(verified.message, {
-      extensions: {
-        code: HttpStatus.Unauthenticaed,
-        http: { status: 401 },
-      },
-    });
+    return response.sendErrorResponse(verified.message, 401);
   }
   return {};
 };

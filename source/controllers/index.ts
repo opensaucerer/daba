@@ -1,11 +1,15 @@
-import * as authquery from './auth/query';
-import * as authmutation from './auth/mutation';
+import * as accountquery from './account/query';
+import * as accountmutation from './account/mutation';
+import * as walletquery from './wallet/query';
+import * as walletmutation from './wallet/mutation';
 
 export default {
   Query: {
-    ...authquery,
+    ...accountquery,
+    ...walletquery,
   },
   Mutation: {
-    ...authmutation,
+    ...accountmutation,
+    ...walletmutation,
   },
 };

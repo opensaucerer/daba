@@ -1,3 +1,5 @@
+import { IAccount } from './account';
+
 export interface MakeResponse {
   status: number | boolean;
   message: string;
@@ -11,5 +13,5 @@ export interface Page {
 }
 
 export interface IContext {
-  user: any;
+  user: IAccount;
 }

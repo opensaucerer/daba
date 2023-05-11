@@ -6,7 +6,7 @@ import { HttpStatus, StatusForCode } from '../types/enum';
 export const makeResponse = (
   status: number | boolean,
   message: string,
-  data: Record<string, any>,
+  data: any,
 ): MakeResponse => {
   return {
     status,

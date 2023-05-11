@@ -1,26 +1,22 @@
 export default `
 
-    type Wallet {
+    type Account {
         id: ID!
-        balance: Float!
-        owner: Account!
-        currency: String!
+        name: String!
+        email: String!
     }
 
-    type Transaction {
-        id: ID!
-        sender: Account!
-        recipient: Account!
-        amount: Float!
-        timestamp: String!
+    type LoginResponse {
+        account: Account
+        token: String
     }
 
     type Query {
-        balance: Float!
-        transactions: [Transaction]
+        account: Account
     }
 
     type Mutation {
-        transfer(email: String!, amount: Float!): Transaction
+        register(name: String!, email: String!, password: String!): Account
+        login(email: String!, password: String!): LoginResponse
     }
 `;

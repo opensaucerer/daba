@@ -1,5 +1,4 @@
 import WalletModel from '../model/wallet';
-import { HydratedDocument } from 'mongoose';
 import mongoose from 'mongoose';
 import { IWallet, TWallet } from '../types/wallet';
 import { Page } from '../types/generic';
@@ -9,7 +8,7 @@ import * as func from '../helpers/func';
 export const createWallet = async (
   data: IWallet,
   session?: mongoose.ClientSession,
-): Promise<HydratedDocument<IWallet>> => {
+): Promise<TWallet> => {
   return await new WalletModel(data).save({ session });
 };
 

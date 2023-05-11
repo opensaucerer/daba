@@ -1,5 +1,4 @@
 import AccountModel from '../model/account';
-import { HydratedDocument } from 'mongoose';
 import mongoose from 'mongoose';
 import { IAccount, TAccount } from '../types/account';
 import { Page } from '../types/generic';
@@ -9,7 +8,7 @@ import * as func from '../helpers/func';
 export const createAccount = async (
   data: IAccount,
   session?: mongoose.ClientSession,
-): Promise<HydratedDocument<IAccount>> => {
+): Promise<TAccount> => {
   return await new AccountModel(data).save({ session });
 };
 

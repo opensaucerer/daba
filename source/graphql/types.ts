@@ -1,5 +1,5 @@
 import { gql } from 'apollo-server-core';
-import authdef from '../controllers/auth/type';
 import accountdef from '../controllers/account/type';
+import walletdef from '../controllers/wallet/type';
 
-export default gql(accountdef + authdef);
+export default gql(walletdef + accountdef);
