@@ -11,6 +11,10 @@ declare global {
       DB_PASSWORD: string;
       DEPLOYMENT_ENV: string;
       JWT_EXPIRY: string;
+      KAFKA_CLUSTER: string;
+      KAFKA_CLIENT_ID: string;
+      KAFKA_USERNAME: string;
+      KAFKA_PASSWORD: string;
     }
   }
 }

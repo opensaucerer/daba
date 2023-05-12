@@ -24,6 +24,25 @@ export const findById = async (
   return await WalletModel.findOne({ _id: id });
 };
 
+export const findByMatchAndUpdate = async (
+  match:
+    | IWallet
+    | Partial<Record<keyof IWallet, any>>
+    | mongoose.RootQuerySelector<IWallet>
+    | mongoose.UpdateQuery<IWallet>,
+  data:
+    | IWallet
+    | Partial<Record<keyof IWallet, any>>
+    | mongoose.RootQuerySelector<IWallet>
+    | mongoose.UpdateQuery<IWallet>,
+  session?: mongoose.ClientSession,
+): Promise<TWallet | null> => {
+  return await WalletModel.findOneAndUpdate(match, data, {
+    new: true,
+    session,
+  });
+};
+
 export const findByIdAndUpdate = async (
   id: mongoose.ObjectId,
   data:

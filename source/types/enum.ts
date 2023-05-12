@@ -19,3 +19,8 @@ export const StatusForCode: Record<number, HttpStatus> = {
   401: HttpStatus.Unathorized,
   403: HttpStatus.Unauthenticaed,
 };
+
+export enum TransactionType {
+  Deposit = 'deposit',
+  Transfer = 'transfer',
+}

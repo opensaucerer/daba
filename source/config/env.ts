@@ -19,4 +19,10 @@ export default {
       uri: `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}/${process.env.DB_NAME}?retryWrites=true&authSource=admin`,
     },
   },
+  kafka: {
+    cluster: process.env.KAFKA_CLUSTER || 'localhost:9092',
+    clientId: process.env.KAFKA_CLIENT_ID || 'my-app',
+    username: process.env.KAFKA_USERNAME || 'admin',
+    password: process.env.KAFKA_PASSWORD || 'password',
+  },
 };

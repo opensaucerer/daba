@@ -14,11 +14,12 @@ export default `
         amount: Float!
         timestamp: String!
         session: String!
+        type: String!
     }
 
     type Query {
         balance: Float!
-        transactions: [Transaction]
+        transactions(limit: Int, offset: Int, sort: String): [Transaction]
     }
 
     type Mutation {

@@ -1,6 +1,7 @@
 import mongoose, { Schema, model } from 'mongoose';
 import { TTransaction } from '../types/transaction';
 import { createHash } from 'node:crypto';
+import { TransactionType } from '../types/enum';
 
 const schema = new Schema<TTransaction>(
   {
@@ -38,6 +39,11 @@ const schema = new Schema<TTransaction>(
       required: true,
       default: Date.now,
     },
+    type: {
+      $type: String,
+      enum: TransactionType,
+      required: true,
+    },
   },
   { timestamps: true, typeKey: '$type' },
 );
@@ -56,8 +62,8 @@ schema.methods.jsonify = function (): Record<string, any> {
       ...t.sender,
     };
   }
-  if (this.recipient) {
-    this.recipient = {
+  if (t.recipient) {
+    t.recipient = {
       id: t.recipient._id,
       ...t.recipient,
     };

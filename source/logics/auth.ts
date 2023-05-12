@@ -39,6 +39,7 @@ export async function register(payload: IAccount): Promise<MakeResponse> {
     const wallet = await walletRepository.createWallet(
       {
         owner: account._id,
+        balance: 0,
       },
       session,
     );

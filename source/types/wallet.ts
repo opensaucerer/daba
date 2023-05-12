@@ -5,7 +5,7 @@ export interface IWallet {
   _id?: mongoose.ObjectId;
   currency?: string;
   owner: mongoose.ObjectId | IAccount;
-  balance?: number;
+  balance: number;
 }
 
 export type TWallet = mongoose.Document &

@@ -3,8 +3,6 @@ import { IAccount } from '../../types/account';
 import * as authvalidator from '../../validator/auth';
 import validate from '../../validator/validate';
 import * as authlogic from '../../logics/auth';
-import * as accountlogic from '../../logics/account';
-import { IContext } from '../../types/generic';
 
 export const register = async (_: unknown, data: IAccount, context: {}) => {
   const validation = validate(authvalidator.register, data);

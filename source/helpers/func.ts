@@ -10,7 +10,9 @@ export function convertToSentenceCase(str: string): string {
 }
 
 export function sortDirection(direction: string): 1 | -1 | 0 {
-  return direction.toLowerCase() === 'asc'
+  return !direction
+    ? 0
+    : direction.toLowerCase() === 'asc'
     ? 1
     : direction.toLowerCase() === 'desc'
     ? -1
