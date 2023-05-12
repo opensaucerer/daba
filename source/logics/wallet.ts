@@ -7,6 +7,8 @@ import * as transactionRepository from '../repository/transaction';
 import { IDeposit, ITransaction, ITransfer } from '../types/transaction';
 import mongoose from 'mongoose';
 import { TransactionType } from '../types/enum';
+import * as kafka from '../service/kafka';
+import { logger } from '../log/logger';
 
 export async function balance(payload: IAccount): Promise<MakeResponse> {
   try {
@@ -192,6 +194,20 @@ export async function transfer(payload: ITransfer): Promise<MakeResponse> {
     }
 
     await session.commitTransaction();
+
+    kafka.consume('transfer', 'transfer', (message: string) => {
+      const tx = JSON.parse(message);
+
+      logger.info(
+        `[${new Date().toISOString()}] [KAFKA] - Transfer of ${
+          tx.amount
+        } from ${tx.sender.name} to ${
+          tx.recipient.name
+        } completed at ${new Date(tx.timestamp).toISOString()}`,
+      );
+    });
+
+    kafka.produce('transfer', JSON.stringify(transaction.jsonify()));
 
     return response.makeResponse(true, '', transaction.jsonify());
   } catch (error: any) {

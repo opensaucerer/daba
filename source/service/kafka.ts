@@ -1,11 +1,11 @@
 import { Kafka } from 'kafkajs';
 import env from '../config/env';
 
-const kafka = new Kafka({
+let kafka = new Kafka({
   clientId: env.kafka.clientId,
   brokers: [env.kafka.cluster],
   ssl: true,
-  logLevel: 5,
+  logLevel: 0,
   sasl: {
     mechanism: 'plain',
     username: env.kafka.username,
