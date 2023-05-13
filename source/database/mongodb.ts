@@ -19,10 +19,25 @@ export function subscribeToConnectionEvents(): void {
   connection.on('connected', () => {
     logger.info('Mongoose connected to ' + env.database.mongodb.name);
   });
-  connection.on('error', (error) => {
+  connection.on('error', async (error) => {
     logger.error('Mongoose connection error: ' + error);
+    await establishConnection();
   });
-  connection.on('disconnected', () => {
+  connection.on('disconnected', async () => {
     logger.warn('Mongoose disconnected');
+    await establishConnection();
+  });
+}
+
+export function closeConnection(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    connection
+      .close()
+      .then(() => {
+        resolve();
+      })
+      .catch((error: Error) => {
+        reject(console.log('DB Connection Error: ', error));
+      });
   });
 }

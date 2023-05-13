@@ -12,7 +12,7 @@ import { IContext } from './types/generic';
 
 export default async function buildGraphQLServer(
   app: Application,
-): Promise<Server> {
+): Promise<{ http: Server; gql: ApolloServer<IContext> }> {
   const httpServer = http.createServer(app);
 
   const schema = makeExecutableSchema({ typeDefs, resolvers });
@@ -49,5 +49,5 @@ export default async function buildGraphQLServer(
   await server.start();
   server.applyMiddleware({ app, path: '/pivot/graphql' });
 
-  return httpServer;
+  return { http: httpServer, gql: server };
 }

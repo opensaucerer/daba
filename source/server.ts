@@ -18,9 +18,9 @@ export default async function startApplication(
 
   await mongodb.establishConnection();
 
-  let server = await buildGraphQLServer(app);
+  const frame = await buildGraphQLServer(app);
 
-  server.listen(env.port, async () => {
+  frame.http.listen(env.port, async () => {
     logger.info(`All connections established successfully.`);
     logger.info(`REST at: http://localhost:${env.port}`);
     logger.info(`GraphQL at: http://localhost:${env.port}/pivot/graphql`);

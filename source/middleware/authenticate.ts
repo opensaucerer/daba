@@ -1,13 +1,13 @@
 import { Request } from 'express';
 import * as jwt from '../helpers/jwt';
-import { GraphQLError } from 'graphql';
-import { HttpStatus } from '../types/enum';
 import * as accountRepository from '../repository/account';
 import mongoose from 'mongoose';
 import * as response from '../helpers/response';
 
 export default async (req: Request) => {
   if (
+    !req ||
+    !req.headers ||
     !req.headers.authorization ||
     !req.headers.authorization.startsWith('Bearer ') ||
     !req.headers.authorization.split(' ')[1] ||

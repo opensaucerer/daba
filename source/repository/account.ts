@@ -1,4 +1,6 @@
 import AccountModel from '../model/account';
+import WalletModel from '../model/wallet';
+import TransactionModel from '../model/transaction';
 import mongoose from 'mongoose';
 import { IAccount, TAccount } from '../types/account';
 import { Page } from '../types/generic';
@@ -59,4 +61,22 @@ export const findAllByMatch = async (
     .sort({ updatedAt: func.sortDirection(page.sort!) || Pager.Sort })
     .skip(page.offset || Pager.Offset)
     .limit(page.limit || Pager.Limit);
+};
+
+export const cascadingDelete = async (
+  id: mongoose.ObjectId,
+  session?: mongoose.ClientSession,
+): Promise<boolean> => {
+  // find account
+  const account = await findById(id);
+  if (!account) {
+    return false;
+  }
+  // delete wallet
+  await WalletModel.deleteMany({ owner: id }, { session });
+  // delete all user created transactions
+  await TransactionModel.deleteMany({ sender: id }, { session });
+  // delete account
+  account.deleteOne({ session });
+  return true;
 };
