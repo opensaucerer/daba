@@ -63,6 +63,7 @@ const schema = new Schema<TTransaction>(
     },
     toObject: {
       transform: function (doc, ret) {
+        console.log(ret.amount);
         ret.id = ret._id;
         ret.amount = parseFloat(
           new bigDecimal(ret.amount)
