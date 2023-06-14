@@ -25,7 +25,7 @@ export default async (req: Request) => {
       if (!account) {
         return response.sendErrorResponse('Login failed!', 403);
       }
-      return { user: account.jsonify() };
+      return { user: account };
     }
     return response.sendErrorResponse(verified.message, 401);
   }

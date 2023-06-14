@@ -1,6 +1,7 @@
 import mongoose, { Schema, model } from 'mongoose';
 import { TWallet } from '../types/wallet';
 import { Currency } from '../types/enum';
+import bigDecimal from 'js-big-decimal';
 
 const schema = new Schema<TWallet>(
   {
@@ -16,25 +17,37 @@ const schema = new Schema<TWallet>(
       required: true,
     },
     balance: {
-      $type: Number,
+      $type: mongoose.Types.Decimal128,
       required: true,
-      default: 0,
+      default: new mongoose.Types.Decimal128('0'),
     },
   },
-  { timestamps: true, typeKey: '$type' },
+  {
+    timestamps: true,
+    typeKey: '$type',
+    toJSON: {
+      transform: function (doc, ret) {
+        ret.id = ret._id;
+        ret.balance = parseFloat(
+          new bigDecimal(ret.balance)
+            .round(2, bigDecimal.RoundingModes.DOWN)
+            .getValue(),
+        );
+        return ret;
+      },
+    },
+    toObject: {
+      transform: function (doc, ret) {
+        ret.id = ret._id;
+        ret.balance = parseFloat(
+          new bigDecimal(ret.balance)
+            .round(2, bigDecimal.RoundingModes.DOWN)
+            .getValue(),
+        );
+        return ret;
+      },
+    },
+  },
 );
-
-/**
- * Returns a json object of the wallet
- * @param
- * @returns {Record<string, any>}
- *
- */
-schema.methods.jsonify = function (): Record<string, any> {
-  return {
-    id: this._id,
-    ...this.toJSON(),
-  };
-};
 
 export default model<TWallet>('wallet', schema);

@@ -16,7 +16,7 @@ export async function balance(payload: IAccount): Promise<MakeResponse> {
     if (!wallet) {
       return response.makeResponse(false, 'Something went wrong!', {});
     }
-    return response.makeResponse(true, '', wallet?.balance);
+    return response.makeResponse(true, '', wallet.toJSON().balance);
   } catch (error: any) {
     return response.makeResponse(false, error.message, {});
   }
@@ -38,7 +38,7 @@ export async function deposit(payload: IDeposit): Promise<MakeResponse> {
       wallet._id!,
       {
         $inc: {
-          balance: payload.amount,
+          balance: new mongoose.Types.Decimal128(payload.amount.toString()),
         },
       },
       session,
@@ -54,7 +54,7 @@ export async function deposit(payload: IDeposit): Promise<MakeResponse> {
 
     const transaction = await transactionRepository.createTransaction(
       {
-        amount: payload.amount,
+        amount: new mongoose.Types.Decimal128(payload.amount.toString()),
         sender: payload.sender,
         type: TransactionType.Deposit,
       },
@@ -72,7 +72,7 @@ export async function deposit(payload: IDeposit): Promise<MakeResponse> {
 
     await session.commitTransaction();
 
-    return response.makeResponse(true, '', transaction.jsonify());
+    return response.makeResponse(true, '', transaction);
   } catch (error: any) {
     await session.abortTransaction();
     return response.makeResponse(false, error.message, {});
@@ -90,11 +90,7 @@ export async function transactions(
       },
       page,
     );
-    return response.makeResponse(
-      true,
-      '',
-      txs?.map((tx) => tx.jsonify()),
-    );
+    return response.makeResponse(true, '', txs);
   } catch (error: any) {
     return response.makeResponse(false, error.message, {});
   }
@@ -128,7 +124,9 @@ export async function transfer(payload: ITransfer): Promise<MakeResponse> {
     }
 
     // Check if sender has enough balance
-    if (swallet.balance < payload.amount) {
+    if (
+      swallet.balance < new mongoose.Types.Decimal128(payload.amount.toString())
+    ) {
       return response.makeResponse(
         false,
         'Insufficient balance! Please try again.',
@@ -139,10 +137,15 @@ export async function transfer(payload: ITransfer): Promise<MakeResponse> {
     session.startTransaction();
 
     swallet = await walletRepository.findByMatchAndUpdate(
-      { _id: swallet._id!, balance: { $gte: payload.amount } },
+      {
+        _id: swallet._id!,
+        balance: {
+          $gte: new mongoose.Types.Decimal128(payload.amount.toString()),
+        },
+      },
       {
         $inc: {
-          balance: -payload.amount,
+          balance: new mongoose.Types.Decimal128((-payload.amount).toString()),
         },
       },
       session,
@@ -158,7 +161,7 @@ export async function transfer(payload: ITransfer): Promise<MakeResponse> {
 
     const transaction = await transactionRepository.createTransaction(
       {
-        amount: payload.amount,
+        amount: new mongoose.Types.Decimal128(payload.amount.toString()),
         sender: payload.sender,
         recipient: recipient._id,
         type: TransactionType.Transfer,
@@ -179,7 +182,7 @@ export async function transfer(payload: ITransfer): Promise<MakeResponse> {
       { _id: rwallet._id! },
       {
         $inc: {
-          balance: payload.amount,
+          balance: new mongoose.Types.Decimal128(payload.amount.toString()),
         },
       },
       session,
@@ -207,9 +210,9 @@ export async function transfer(payload: ITransfer): Promise<MakeResponse> {
       );
     });
 
-    kafka.produce('transfer', JSON.stringify(transaction.jsonify()));
+    kafka.produce('transfer', JSON.stringify(transaction.toJSON()));
 
-    return response.makeResponse(true, '', transaction.jsonify());
+    return response.makeResponse(true, '', transaction);
   } catch (error: any) {
     await session.abortTransaction();
     return response.makeResponse(false, error.message, {});

@@ -43,7 +43,6 @@ export default async function buildGraphQLServer(
     ],
     csrfPrevention: true, // highly recommended
     introspection: true, // turn this off in production
-    // formatError:
   });
 
   await server.start();

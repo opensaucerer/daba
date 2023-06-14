@@ -2,6 +2,7 @@ import mongoose, { Schema, model } from 'mongoose';
 import { TTransaction } from '../types/transaction';
 import { createHash } from 'node:crypto';
 import { TransactionType } from '../types/enum';
+import bigDecimal from 'js-big-decimal';
 
 const schema = new Schema<TTransaction>(
   {
@@ -31,7 +32,7 @@ const schema = new Schema<TTransaction>(
       ref: 'account',
     },
     amount: {
-      $type: Number,
+      $type: mongoose.Types.Decimal128,
       required: true,
     },
     timestamp: {
@@ -45,33 +46,33 @@ const schema = new Schema<TTransaction>(
       required: true,
     },
   },
-  { timestamps: true, typeKey: '$type' },
+  {
+    timestamps: true,
+    typeKey: '$type',
+    toJSON: {
+      transform: function (doc, ret) {
+        console.log(ret.amount);
+        ret.id = ret._id;
+        ret.amount = parseFloat(
+          new bigDecimal(ret.amount)
+            .round(2, bigDecimal.RoundingModes.DOWN)
+            .getValue(),
+        );
+        return ret;
+      },
+    },
+    toObject: {
+      transform: function (doc, ret) {
+        ret.id = ret._id;
+        ret.amount = parseFloat(
+          new bigDecimal(ret.amount)
+            .round(2, bigDecimal.RoundingModes.DOWN)
+            .getValue(),
+        );
+        return ret;
+      },
+    },
+  },
 );
-
-/**
- * Returns a json object of the wallet
- * @param
- * @returns {Record<string, any>}
- *
- */
-schema.methods.jsonify = function (): Record<string, any> {
-  const t = this.toJSON();
-  if (t.sender) {
-    t.sender = {
-      id: t.sender._id,
-      ...t.sender,
-    };
-  }
-  if (t.recipient) {
-    t.recipient = {
-      id: t.recipient._id,
-      ...t.recipient,
-    };
-  }
-  return {
-    id: this._id,
-    ...t,
-  };
-};
 
 export default model<TTransaction>('transaction', schema);

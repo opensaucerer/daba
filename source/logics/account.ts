@@ -12,7 +12,7 @@ export async function account(payload: IAccount): Promise<MakeResponse> {
 
     account.set('password', undefined);
 
-    return response.makeResponse(true, '', account.jsonify());
+    return response.makeResponse(true, '', account);
   } catch (error: any) {
     return response.makeResponse(false, error.message, {});
   }

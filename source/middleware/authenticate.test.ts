@@ -36,7 +36,7 @@ describe('authenticate', () => {
 
     const result = await authenticate(req);
 
-    expect(result).toEqual({ user: account.jsonify() });
+    expect(result).toEqual({ user: account });
   });
 
   it('should return an empty object if token is empty', async () => {

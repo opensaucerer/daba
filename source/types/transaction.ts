@@ -5,7 +5,7 @@ export interface ITransaction {
   _id?: mongoose.ObjectId;
   sender: mongoose.ObjectId | IAccount;
   recipient?: mongoose.ObjectId | IAccount;
-  amount: number;
+  amount: mongoose.Types.Decimal128 | number;
   timestamp?: string;
   session?: string;
   type: string;
@@ -22,7 +22,4 @@ export interface IDeposit {
   sender: mongoose.ObjectId;
 }
 
-export type TTransaction = mongoose.Document &
-  ITransaction & {
-    jsonify(): Record<string, any>;
-  };
+export type TTransaction = mongoose.Document & ITransaction;

@@ -50,7 +50,7 @@ export async function register(payload: IAccount): Promise<MakeResponse> {
 
     await session.commitTransaction();
 
-    return response.makeResponse(true, '', account.jsonify());
+    return response.makeResponse(true, '', account);
   } catch (error: any) {
     await session.abortTransaction();
     return response.makeResponse(false, error.message, {});
@@ -73,7 +73,7 @@ export async function login(payload: IAccount): Promise<MakeResponse> {
     account.set('password', undefined);
 
     return response.makeResponse(true, '', {
-      account: account.jsonify(),
+      account: account,
       token: jwt.signToken({ id: account._id }),
     });
   } catch (error: any) {

@@ -5,10 +5,7 @@ export interface IWallet {
   _id?: mongoose.ObjectId;
   currency?: string;
   owner: mongoose.ObjectId | IAccount;
-  balance: number;
+  balance: mongoose.Types.Decimal128 | number;
 }
 
-export type TWallet = mongoose.Document &
-  IWallet & {
-    jsonify(): Record<string, any>;
-  };
+export type TWallet = mongoose.Document & IWallet;
