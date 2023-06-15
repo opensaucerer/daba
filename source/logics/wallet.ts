@@ -72,7 +72,7 @@ export async function deposit(payload: IDeposit): Promise<MakeResponse> {
 
     await session.commitTransaction();
 
-    return response.makeResponse(true, '', transaction);
+    return response.makeResponse(true, '', transaction.toJSON());
   } catch (error: any) {
     await session.abortTransaction();
     return response.makeResponse(false, error.message, {});
@@ -90,7 +90,11 @@ export async function transactions(
       },
       page,
     );
-    return response.makeResponse(true, '', txs);
+    return response.makeResponse(
+      true,
+      '',
+      txs?.map((tx) => tx.toJSON()),
+    );
   } catch (error: any) {
     return response.makeResponse(false, error.message, {});
   }
@@ -212,7 +216,7 @@ export async function transfer(payload: ITransfer): Promise<MakeResponse> {
 
     kafka.produce('transfer', JSON.stringify(transaction.toJSON()));
 
-    return response.makeResponse(true, '', transaction);
+    return response.makeResponse(true, '', transaction.toJSON());
   } catch (error: any) {
     await session.abortTransaction();
     return response.makeResponse(false, error.message, {});
